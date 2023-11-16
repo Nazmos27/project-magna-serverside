@@ -33,6 +33,15 @@ async function run() {
         res.send(result)
     })
 
+    app.post('/allPosts',async(req,res)=>{
+      const postData= req.body;
+      if(!postData){
+        return res.status(422).send({error:"You must provide data"})
+      }
+      const insertResult = await allPostsCollection.insertOne(postData);
+      res.send(insertResult)
+    })
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
