@@ -33,7 +33,7 @@ async function run() {
         res.send(result)
     })
 
-    app.post('/allPosts',async(req,res)=>{
+    app.post('/posts',async(req,res)=>{
       const postData= req.body;
       if(!postData){
         return res.status(422).send({error:"You must provide data"})
