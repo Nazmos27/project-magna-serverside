@@ -9,7 +9,7 @@ app.use(cors())
 app.use(express.json())
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.choi6e7.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -28,18 +28,37 @@ async function run() {
 
     const allPostsCollection = client.db("magnaDB").collection("allPosts")
 
-    app.get('/allPosts',async(req,res)=>{
-        const result = await allPostsCollection.find().toArray()
-        res.send(result)
+    app.get('/allPosts', async (req, res) => {
+      const result = await allPostsCollection.find().toArray()
+      res.send(result)
     })
 
-    app.post('/posts',async(req,res)=>{
-      const postData= req.body;
-      if(!postData){
-        return res.status(422).send({error:"You must provide data"})
+    app.post('/posts', async (req, res) => {
+      const postData = req.body;
+      if (!postData) {
+        return res.status(422).send({ error: "You must provide data" })
       }
       const insertResult = await allPostsCollection.insertOne(postData);
       res.send(insertResult)
+    })
+
+    app.put('/posts/:id', async (req, res) => {
+      const id = req.params.id
+      const filter = { _id: new ObjectId(id) }
+      const options = { upsert: true }
+      const updateData = req.body
+      const upadated = {
+        $set: {
+          doner: updateData.doner,
+          title: updateData.title,
+          description: updateData.description,
+          img: updateData.imgUrl,
+          time: updateData.time,
+          react: updateData.updatedReact,
+        }
+      }
+      const result = await allPostsCollection.updateOne(filter,upadated,options)
+      res.send(result)
     })
 
 
@@ -54,12 +73,12 @@ async function run() {
 run().catch(console.dir);
 
 
-app.get('/',(req,res) => {
-    res.send('magna server is running')
+app.get('/', (req, res) => {
+  res.send('magna server is running')
 })
 
-app.listen(port,()=>{
-    console.log(`server running on ${port}`)
+app.listen(port, () => {
+  console.log(`server running on ${port}`)
 })
 
 
