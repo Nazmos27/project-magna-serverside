@@ -42,7 +42,6 @@ async function run() {
       const insertResult = await allPostsCollection.insertOne(postData);
       res.send(insertResult)
     })
-
     app.post('/usersInfo',async(req,res)=>{
       const userData=req.body
       if(!userData){
@@ -51,7 +50,12 @@ async function run() {
       const result = await allUsersCollection.insertOne(userData)
       res.send(result)
     })
+    app.get('/usersInfo',async(req,res)=>{
+      const result = await allUsersCollection.find().toArray()
+      res.send(result)
+    })
 
+    
     app.put('/posts/:id', async (req, res) => {
       const id = req.params.id
       const filter = { _id: new ObjectId(id) }
