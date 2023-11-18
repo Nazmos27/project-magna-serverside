@@ -27,6 +27,7 @@ async function run() {
     await client.connect();
 
     const allPostsCollection = client.db("magnaDB").collection("allPosts")
+    const allUsersCollection = client.db("magnaDB").collection("usersData")
 
     app.get('/allPosts', async (req, res) => {
       const result = await allPostsCollection.find().toArray()
@@ -42,6 +43,15 @@ async function run() {
       res.send(insertResult)
     })
 
+    app.post('/usersInfo',async(req,res)=>{
+      const userData=req.body
+      if(!userData){
+        return res.status(422).send({error:"you must provide data"})
+      }
+      const result = await allUsersCollection.insertOne(userData)
+      res.send(result)
+    })
+
     app.put('/posts/:id', async (req, res) => {
       const id = req.params.id
       const filter = { _id: new ObjectId(id) }
@@ -52,7 +62,7 @@ async function run() {
           doner: updateData.doner,
           title: updateData.title,
           description: updateData.description,
-          img: updateData.imgUrl,
+          img: updateData.img,
           time: updateData.time,
           react: updateData.updatedReact,
         }
