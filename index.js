@@ -42,6 +42,14 @@ async function run() {
       const insertResult = await allPostsCollection.insertOne(postData);
       res.send(insertResult)
     })
+
+
+    app.get('/usersInfo',async(req,res)=>{
+      const user=req.query.user
+      const query = {user:user}
+      const result = await allUsersCollection.findOne(query)
+      res.send(result)
+    })
     app.post('/usersInfo',async(req,res)=>{
       const userData=req.body
       if(!userData){
@@ -50,11 +58,22 @@ async function run() {
       const result = await allUsersCollection.insertOne(userData)
       res.send(result)
     })
-    app.get('/usersInfo',async(req,res)=>{
-      const result = await allUsersCollection.find().toArray()
-      res.send(result)
+    app.put('/updateUser/:email',async(req,res)=>{
+      const email = req.params.email
+      const filter = { user: email }
+      const options = { upsert: true }
+      const updateData = req.body
+      const upadated = {
+        $set: {
+          user: updateData.user,
+          cartList:updateData.cart,
+          likedPost:updateData.likedPost,
+        }
+      }
+      console.log('Update Data : ',updateData)
+      const updatedResult = await allUsersCollection.updateOne(filter,upadated,options)
+      res.send(updatedResult)
     })
-
     
     app.put('/posts/:id', async (req, res) => {
       const id = req.params.id
