@@ -65,8 +65,8 @@ async function run() {
       const updateData = req.body
       const upadated = {
         $set: {
-          user: updateData.user,
-          cartList:updateData.cart,
+          user: updateData.userMail,
+          cartList:updateData.updatedCart,
           likedPost:updateData.likedPost,
         }
       }
