@@ -67,7 +67,7 @@ async function run() {
         $set: {
           user: updateData.userMail,
           cartList:updateData.updatedCart,
-          likedPost:updateData.likedPost,
+          likedPost:updateData.updatedLiked,
         }
       }
       console.log('Update Data : ',updateData)
