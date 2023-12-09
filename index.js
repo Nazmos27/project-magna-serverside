@@ -74,25 +74,25 @@
 //       const updatedResult = await allUsersCollection.updateOne(filter,upadated,options)
 //       res.send(updatedResult)
 //     })
-    
-//     app.put('/posts/:id', async (req, res) => {
-//       const id = req.params.id
-//       const filter = { _id: new ObjectId(id) }
-//       const options = { upsert: true }
-//       const updateData = req.body
-//       const upadated = {
-//         $set: {
-//           doner: updateData.doner,
-//           title: updateData.title,
-//           description: updateData.description,
-//           img: updateData.img,
-//           time: updateData.time,
-//           react: updateData.updatedReact,
-//         }
-//       }
-//       const result = await allPostsCollection.updateOne(filter,upadated,options)
-//       res.send(result)
-//     })
+
+    // app.put('/posts/:id', async (req, res) => {
+    //   const id = req.params.id
+    //   const filter = { _id: new ObjectId(id) }
+    //   const options = { upsert: true }
+    //   const updateData = req.body
+    //   const upadated = {
+    //     $set: {
+    //       doner: updateData.doner,
+    //       title: updateData.title,
+    //       description: updateData.description,
+    //       img: updateData.img,
+    //       time: updateData.time,
+    //       react: updateData.updatedReact,
+    //     }
+    //   }
+    //   const result = await allPostsCollection.updateOne(filter,upadated,options)
+    //   res.send(result)
+    // })
 //     //commenting
 
 
@@ -117,132 +117,172 @@
 
 
 
+
+
+
+
+// const express = require('express');
+// const app = express();
+// const cors = require('cors');
+// const mongoose = require('mongoose');
+// const port = process.env.PORT || 5000;
+// require('dotenv').config();
+
+// // Middlewares
+// app.use(cors());
+// app.use(express.json());
+
+// // Connect to MongoDB using Mongoose
+// const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.choi6e7.mongodb.net/magnaDB?retryWrites=true&w=majority`
+// mongoose.connect(uri, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// });
+
+// // Create Mongoose models
+// const AllPosts = mongoose.model('AllPost', {
+//   doner: String,
+//   title: String,
+//   description: String,
+//   img: String,
+//   time: String,
+//   react: Array,
+// });
+
+// const UsersData = mongoose.model('UsersData', {
+//   user: String,
+//   cartList: Array,
+//   likedPost: Array,
+// });
+
+// const Messages = mongoose.model('Messages', {
+//   user: String,
+//   message: String,
+// });
+
+// // Your existing routes with Mongoose
+// app.get('/allPosts', async (req, res) => {
+//   const result = await AllPosts.find().exec();
+//   res.send(result);
+// });
+
+// app.post('/posts', async (req, res) => {
+//   const postData = req.body;
+//   if (!postData) {
+//     return res.status(422).send({ error: 'You must provide data' });
+//   }
+//   const newPost = new AllPosts(postData);
+//   const savedPost = await newPost.save();
+//   res.send(savedPost);
+// });
+
+// app.get('/usersInfo', async (req, res) => {
+//   const user = req.query.user;
+//   const result = await UsersData.findOne({ user }).exec();
+//   res.send(result);
+// });
+
+// app.post('/usersInfo', async (req, res) => {
+//   const userData = req.body;
+//   if (!userData) {
+//     return res.status(422).send({ error: 'You must provide data' });
+//   }
+//   const newUser = new UsersData(userData);
+//   const savedUser = await newUser.save();
+//   res.send(savedUser);
+// });
+
+// app.put('/updateUser/:email', async (req, res) => {
+
+// });
+
+// app.put('/posts/:id', async (req, res) => {
+//   const id = req.params.id
+//   const filter = { _id: new ObjectId(id) }
+//   const options = { upsert: true }
+//   const updateData = req.body
+//   const upadated = {
+//     $set: {
+//       doner: updateData.doner,
+//       title: updateData.title,
+//       description: updateData.description,
+//       img: updateData.img,
+//       time: updateData.time,
+//       react: updateData.updatedReact,
+//     }
+//   }
+//   const result = await allPostsCollection.updateOne(filter, upadated, options)
+//   res.send(result)
+
+// });
+
+// // New route to get messages for a particular user
+// app.get('/messages/:user', async (req, res) => {
+//   const user = req.params.user;
+//   try {
+//     const messages = await Messages.find({ user }).exec();
+//     res.send(messages);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send({ error: 'Internal Server Error' });
+//   }
+// });
+
+// // New route to post a message for a particular user
+// app.post('/messages/:user', async (req, res) => {
+//   const user = req.params.user;
+//   const messageData = req.body;
+
+//   if (!messageData || !messageData.message) {
+//     return res.status(422).send({ error: 'You must provide a message' });
+//   }
+
+//   try {
+//     const newMessage = new Messages({ user, message: messageData.message });
+//     const savedMessage = await newMessage.save();
+//     res.send(savedMessage);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send({ error: 'Internal Server Error' });
+//   }
+// });
+
+// // ... (your existing code)
+
+// // Add this line to handle the connection to the database
+// const db = mongoose.connection;
+// db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+// db.once('open', () => {
+//   console.log('Connected to the MongoDB database');
+// });
+
+// app.get('/', (req, res) => {
+//   res.send('magna server is running');
+// });
+
+// app.listen(port, () => {
+//   console.log(`server running on ${port}`);
+// });
+
+
 const express = require('express');
 const app = express();
-const cors = require('cors');
-const mongoose = require('mongoose');
 const port = process.env.PORT || 5000;
-require('dotenv').config();
 
-// Middlewares
-app.use(cors());
+//connect db 
+require('./db/connection')
+
+//import files
+
+
 app.use(express.json());
+app.use(express.urlencoded({extended:true}));
 
-// Connect to MongoDB using Mongoose
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.choi6e7.mongodb.net/magnaDB?retryWrites=true&w=majority`
-mongoose.connect(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
 
-// Create Mongoose models
-const AllPosts = mongoose.model('AllPost', {
-  doner: String,
-  title: String,
-  description: String,
-  img: String,
-  time: String,
-  react: Array,
-});
-
-const UsersData = mongoose.model('UsersData', {
-  user: String,
-  cartList: Array,
-  likedPost: Array,
-});
-
-const Messages = mongoose.model('Messages', {
-  user: String,
-  message: String,
-});
-
-// Your existing routes with Mongoose
-app.get('/allPosts', async (req, res) => {
-  const result = await AllPosts.find().exec();
-  res.send(result);
-});
-
-app.post('/posts', async (req, res) => {
-  const postData = req.body;
-  if (!postData) {
-    return res.status(422).send({ error: 'You must provide data' });
-  }
-  const newPost = new AllPosts(postData);
-  const savedPost = await newPost.save();
-  res.send(savedPost);
-});
-
-app.get('/usersInfo', async (req, res) => {
-  const user = req.query.user;
-  const result = await UsersData.findOne({ user }).exec();
-  res.send(result);
-});
-
-app.post('/usersInfo', async (req, res) => {
-  const userData = req.body;
-  if (!userData) {
-    return res.status(422).send({ error: 'You must provide data' });
-  }
-  const newUser = new UsersData(userData);
-  const savedUser = await newUser.save();
-  res.send(savedUser);
-});
-
-app.put('/updateUser/:email', async (req, res) => {
-  // ... (your existing code)
-});
-
-app.put('/posts/:id', async (req, res) => {
-  // ... (your existing code)
-});
-
-// New route to get messages for a particular user
-app.get('/messages/:user', async (req, res) => {
-  const user = req.params.user;
-  try {
-    const messages = await Messages.find({ user }).exec();
-    res.send(messages);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ error: 'Internal Server Error' });
-  }
-});
-
-// New route to post a message for a particular user
-app.post('/messages/:user', async (req, res) => {
-  const user = req.params.user;
-  const messageData = req.body;
-
-  if (!messageData || !messageData.message) {
-    return res.status(422).send({ error: 'You must provide a message' });
-  }
-
-  try {
-    const newMessage = new Messages({ user, message: messageData.message });
-    const savedMessage = await newMessage.save();
-    res.send(savedMessage);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ error: 'Internal Server Error' });
-  }
-});
-
-// ... (your existing code)
-
-// Add this line to handle the connection to the database
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('open', () => {
-  console.log('Connected to the MongoDB database');
-});
-
-app.get('/', (req, res) => {
-  res.send('magna server is running');
-});
+app.get('/',async(req,res)=>{
+  res.send('Magna server is running with mongoose!')
+})
 
 app.listen(port, () => {
-  console.log(`server running on ${port}`);
-});
-
-
-
+  console.log('Magna server is running on ' + port);
+})
