@@ -268,20 +268,65 @@
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 5000;
+const mongoose = require('mongoose')
 
 //connect db 
-require('./db/connection')
+require('./db/connection');
 
 //import files
-
+const Conversations = require('./models/Conversations.js');
+const UsersData = mongoose.model('UsersData', {
+  user: String,
+  cartList: Array,
+  likedPost: Array,
+});
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
 
 app.get('/',async(req,res)=>{
-  res.send('Magna server is running with mongoose!')
+  res.send('Magna server is running with mongoose!');
 })
+
+//Routes
+
+app.post('/usersInfo', async (req, res) => {
+  const userData = req.body;
+  if (!userData) {
+    return res.status(422).send({ error: 'You must provide data' });
+  }
+  const newUser = new UsersData(userData);
+  const savedUser = await newUser.save();
+  res.send(savedUser);
+});
+
+
+
+
+app.post('/conversations',async(req,res) => {
+  try{
+    const {senderId,receiverId} = req.body;
+    const newConversation = new Conversations({members : [senderId,receiverId]});
+    await newConversation.save();
+    res.status(200).send('Conversation Created Successfully');
+  }catch(error){
+    console.log('error from /conversation api',error);
+  }
+})
+
+app.get('/conversations/:userId',async(req,res) => {
+  try {
+    const userId = req.params.userId;
+    const conversations = await Conversations.find({members: {$in : [userId]}});
+    res.status(200).json(conversations);
+  } catch (error) {
+    console.log('Error from /conversation/:userId',error);
+  }
+})
+
+
+
 
 app.listen(port, () => {
   console.log('Magna server is running on ' + port);
