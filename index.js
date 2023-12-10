@@ -276,7 +276,9 @@ require('./db/connection');
 //import files
 const Conversations = require('./models/Conversations.js');
 const UsersData = mongoose.model('UsersData', {
-  user: String,
+  name: String,
+  img:String,
+  email: String,
   cartList: Array,
   likedPost: Array,
 });
@@ -319,7 +321,13 @@ app.get('/conversations/:userId',async(req,res) => {
   try {
     const userId = req.params.userId;
     const conversations = await Conversations.find({members: {$in : [userId]}});
-    res.status(200).json(conversations);
+    const conversationUserData = Promise.all(conversations.map(async (conversation) => {
+      const receiverId = await conversation.members.find((member) => member !== userId)
+      const user =  await UsersData.findById(receiverId);
+      return {user : {email : user.email, name: user.name}, conversationId : conversation._id}
+    }))
+    console.log('ConversatinUserData',await conversationUserData);
+    res.status(200).json(await conversationUserData);
   } catch (error) {
     console.log('Error from /conversation/:userId',error);
   }
