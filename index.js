@@ -282,6 +282,7 @@ const UsersData = mongoose.model('UsersData', {
   cartList: Array,
   likedPost: Array,
 });
+const Messages = require('./models/Messages.js');
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
@@ -333,6 +334,54 @@ app.get('/conversations/:userId',async(req,res) => {
   }
 })
 
+app.post('/messages',async(req,res) => {
+  try {
+    const {conversationId,senderId,message,receiverId=''} = req.body;
+    if(!senderId || !message) return res.status(200).send('Please fill all required fields');
+    if(!conversationId && receiverId) {
+      const newConversation = new Conversations({members : [senderId,receiverId]});
+      await newConversation.save();
+      const newMessage = new Messages({conversationId : newConversation._id, senderId, message});
+      await newMessage.save();
+      res.status(200).send('Message Sent Successfully');
+    }else if(!conversationId && !receiverId){
+      return res.status(200).send('Please fill all required fields');
+    }
+    const newMessage = new Messages({conversationId,senderId,message});
+    await newMessage.save();
+    res.status(200).send("Message Sent Seccessfully")
+
+  } catch (error) {
+    console.log('error from /message api ',error);
+  }
+})
+
+app.get('/messages/:conversationId',async(req,res) => {
+  try {
+    const conversationId = req.params.conversationId;
+    if(conversationId === 'new') return res.status(200).json([]);
+    const messages = await Messages.find({conversationId});
+    const messagesUserData = Promise.all(messages.map(async(message) => {
+      const user = await UsersData.findById(message.senderId);
+      return {user : {email: user.email, name: user.name},message: message.message}
+    }))
+    res.status(200).json(await messagesUserData)
+  } catch (error) {
+    console.log('Error from /message/:conversationId',error);
+  }
+})
+
+app.get('/users',async(req,res)=>{
+  try {
+    const users = await UsersData.find();
+    const usersData = Promise.all(users.map(async(user) => {
+      return {user : {email : user.email, name : user.name}, userId : user._id}
+    }))
+    res.status(200).json(await usersData)
+  } catch (error) {
+    console.log('Error from /users',error);
+  }
+})
 
 
 
