@@ -267,6 +267,7 @@
 
 const express = require('express');
 const app = express();
+const cors = require('cors')
 const port = process.env.PORT || 5000;
 const mongoose = require('mongoose')
 
@@ -286,6 +287,7 @@ const Messages = require('./models/Messages.js');
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
+app.use(cors());
 
 
 app.get('/',async(req,res)=>{
@@ -331,6 +333,7 @@ app.get('/conversations/:userId',async(req,res) => {
     res.status(200).json(await conversationUserData);
   } catch (error) {
     console.log('Error from /conversation/:userId',error);
+    console.log('hello');
   }
 })
 
